@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDisclosure } from "react-use-disclosure";
 import { API_URLs } from "../constants";
 import { House } from "../types";
 import { filterHouses, nonDuplicate } from "../utils";
@@ -12,6 +13,8 @@ const HousesList = ({ search }: Props) => {
   const [content, setContent] = useState<Array<House>>([]);
   const [house, setHouse] = useState<House>();
   const [modal, setModal] = useState<boolean>();
+
+  const { close: modalClose, isOpen, open: modalOpen } = useDisclosure(true);
 
   useEffect(() => {
     (async () => {
@@ -40,7 +43,14 @@ const HousesList = ({ search }: Props) => {
             </div>
           ))}
       </div>
-      {modal && house && <Modal item={house} />}
+      {modal && house && (
+        <Modal
+          isOpen={isOpen}
+          modalClose={modalClose}
+          modalOpen={modalOpen}
+          item={house}
+        />
+      )}
     </>
   );
 };

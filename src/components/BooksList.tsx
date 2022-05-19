@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDisclosure } from "react-use-disclosure";
 import { API_URLs } from "../constants";
 import { Book } from "../types";
 import { filterBooks, nonDuplicate } from "../utils";
@@ -12,6 +13,8 @@ const BooksList = ({ search }: Props) => {
   const [content, setContent] = useState<Array<Book>>([]);
   const [book, setBook] = useState<Book>();
   const [modal, setModal] = useState<boolean>();
+
+  const { close: modalClose, isOpen, open: modalOpen } = useDisclosure(true);
 
   useEffect(() => {
     (async () => {
@@ -35,13 +38,21 @@ const BooksList = ({ search }: Props) => {
                 onClick={() => {
                   setBook(theBook);
                   setModal(true);
+                  modalOpen();
                 }}
               >
                 {theBook.name}
               </div>
             ))}
       </div>
-      {modal && book && <Modal item={book} />}
+      {modal && book && (
+        <Modal
+          modalClose={modalClose}
+          modalOpen={modalOpen}
+          isOpen={isOpen}
+          item={book}
+        />
+      )}
     </>
   );
 };

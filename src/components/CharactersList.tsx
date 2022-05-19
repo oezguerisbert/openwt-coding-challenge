@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDisclosure } from "react-use-disclosure";
 import { API_URLs } from "../constants";
 import { Character } from "../types";
 import { filterCharacters, nonDuplicate } from "../utils";
@@ -12,6 +13,7 @@ const CharactersList = ({ search }: Props) => {
   const [content, setContent] = useState<Array<Character>>([]);
   const [character, setCharacter] = useState<Character>();
   const [modal, setModal] = useState<boolean>();
+  const { close: modalClose, isOpen, open: modalOpen } = useDisclosure(true);
 
   useEffect(() => {
     (async () => {
@@ -37,13 +39,21 @@ const CharactersList = ({ search }: Props) => {
                 onClick={() => {
                   setCharacter(theCharacter);
                   setModal(true);
+                  modalOpen();
                 }}
               >
                 {theCharacter.name}
               </div>
             ))}
       </div>
-      {modal && character && <Modal item={character} />}
+      {modal && character && (
+        <Modal
+          isOpen={isOpen}
+          modalClose={modalClose}
+          modalOpen={modalOpen}
+          item={character}
+        />
+      )}
     </>
   );
 };
