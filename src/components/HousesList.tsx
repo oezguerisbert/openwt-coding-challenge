@@ -37,6 +37,7 @@ const HousesList = ({ search }: Props) => {
               onClick={() => {
                 setHouse(theHouse);
                 setModal(true);
+                modalOpen()
               }}
             >
               {theHouse.name}
