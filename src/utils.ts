@@ -1,6 +1,6 @@
 import { Book, Character, House } from "./types";
 
-export const filterBooks = (search: string, obj: Book) =>
+export const filterBooks = (search: string = "", obj: Book) =>
   Object.entries(obj).some(([key, value]) =>
     new RegExp(`.*${search.toLowerCase()}.*`).test(
       value.toString().toLowerCase()
