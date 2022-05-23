@@ -13,23 +13,28 @@ const CharactersList = ({ search }: Props) => {
   const [content, setContent] = useState<Array<Character>>([]);
   const [character, setCharacter] = useState<Character>();
   const [modal, setModal] = useState<boolean>();
+  const [loading, setLoading] = useState<boolean>(true);
   const { close: modalClose, isOpen, open: modalOpen } = useDisclosure(true);
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const result: Array<Character> = await fetch(API_URLs.characters).then(
         (response) => response.json()
       );
       setContent(nonDuplicate(result.filter(({ name }) => name.length > 0)));
+      setLoading(false);
     })();
   }, []);
 
-  return (
+  return loading ? (
+    <div>Loading...</div>
+  ) : (
     <>
       <div className="grid grid-flow-row grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
         {content &&
           content
-            ?.filter((theCharacter) => filterCharacters(search, theCharacter))
+            .filter((theCharacter) => filterCharacters(search, theCharacter))
             .map((theCharacter, index) => (
               <div
                 key={index}

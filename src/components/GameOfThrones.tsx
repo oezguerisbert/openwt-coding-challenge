@@ -1,7 +1,6 @@
 import {
   lazy,
   ReactNode,
-  Suspense,
   useContext,
   useEffect,
   useRef,
@@ -25,6 +24,8 @@ const ContentView: ContentViewType = (search: string) => ({
 const GameOfThrones = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
   const [resources, setResources] = useState<ResourceResult>();
   const [selectedResource, setSelectedResource] = useState<Resource>(
     Resource.Books
@@ -34,19 +35,28 @@ const GameOfThrones = () => {
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const res = await fetch(API_URL).then((r) => r.json());
       setResources(res);
+      setLoading(false);
     })();
   }, []);
 
   return (
     <div className="flex flex-col gap-4 w-full">
       <div className="flex flex-row gap-2">
-        {resources &&
+        {loading ? (
+          <div className="flex px-3 py-2 justify-center items-center hover:bg-slate-300">
+            Loading...
+          </div>
+        ) : (
+          resources &&
           Object.entries(ResourcesList).map(([k, name]) => (
             <button
               className={`${
-                selectedResource === name ? "bg-blue-400" : "bg-slate-100"
+                selectedResource === name
+                  ? "bg-blue-400 hover:bg-blue-500 hover:text-white"
+                  : "bg-slate-100"
               } flex px-3 py-2 justify-center items-center hover:bg-slate-300`}
               key={name}
               value={name}
@@ -57,7 +67,8 @@ const GameOfThrones = () => {
             >
               {name}
             </button>
-          ))}
+          ))
+        )}
         <div className="flex flex-grow" />
         <form
           ref={formRef}
@@ -84,9 +95,13 @@ const GameOfThrones = () => {
         </button>
       </div>
       <div className="bg-slate-100 p-4 w-full">
-        <Suspense fallback="Loading">
-          {ContentView(search)[selectedResource]}
-        </Suspense>
+        {loading ? (
+          <div className="flex px-3 py-2 justify-center items-center hover:bg-slate-300">
+            Loading...
+          </div>
+        ) : (
+          ContentView(search)[selectedResource]
+        )}
       </div>
     </div>
   );

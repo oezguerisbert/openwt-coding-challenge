@@ -13,25 +13,34 @@ interface Props {
 const BooksList = ({ search }: Props) => {
   const [content, setContent] = useState<Array<Book>>([]);
   const [book, setBook] = useState<Book>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [modal, setModal] = useState<boolean>();
 
   const { close: modalClose, isOpen, open: modalOpen } = useDisclosure(true);
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       const result = await fetch(API_URLs.books).then((response) =>
         response.json()
       );
       setContent(nonDuplicate(result));
+      setLoading(false);
     })();
   }, []);
 
-  return (
+  return loading ? (
+    <div>Loading...</div>
+  ) : (
     <>
       <div className="grid grid-flow-row grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 w-full">
         {content &&
           content
-            ?.filter((theBook) => filterBooks(search, theBook))
+            .filter((theBook) =>
+              filterBooks(search, theBook, {
+                omit: { characters: true },
+              })
+            )
             .map((theBook) => (
               <div
                 key={theBook.isbn}
