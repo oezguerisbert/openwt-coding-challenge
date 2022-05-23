@@ -3,6 +3,7 @@ import { useDisclosure } from "react-use-disclosure";
 import { API_URLs } from "../constants";
 import { House } from "../types";
 import { filterHouses, nonDuplicate } from "../utils";
+import { CharacterList } from "./CharacterList";
 import { Modal } from "./Modal";
 
 interface Props {
@@ -37,7 +38,7 @@ const HousesList = ({ search }: Props) => {
               onClick={() => {
                 setHouse(theHouse);
                 setModal(true);
-                modalOpen()
+                modalOpen();
               }}
             >
               {theHouse.name}
@@ -50,6 +51,14 @@ const HousesList = ({ search }: Props) => {
           modalClose={modalClose}
           modalOpen={modalOpen}
           item={house}
+          replace={{
+            swornMembers:
+              house.swornMembers.length <= 5 ? (
+                <CharacterList links={house.swornMembers} />
+              ) : (
+                house.swornMembers.length
+              ),
+          }}
         />
       )}
     </>

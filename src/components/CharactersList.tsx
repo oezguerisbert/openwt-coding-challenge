@@ -17,12 +17,10 @@ const CharactersList = ({ search }: Props) => {
 
   useEffect(() => {
     (async () => {
-      const result = (
-        (await fetch(API_URLs.characters).then((response) =>
-          response.json()
-        )) as Array<Character>
-      ).filter((c) => c.name.length > 0);
-      setContent(nonDuplicate(result));
+      const result: Array<Character> = await fetch(API_URLs.characters).then(
+        (response) => response.json()
+      );
+      setContent(nonDuplicate(result.filter(({ name }) => name.length > 0)));
     })();
   }, []);
 
@@ -52,9 +50,14 @@ const CharactersList = ({ search }: Props) => {
           modalClose={modalClose}
           modalOpen={modalOpen}
           item={character}
+          replace={{
+            father: <div className="flex">{character.name}</div>,
+            spouse: <div className="flex">{character.spouse}</div>,
+          }}
         />
       )}
     </>
   );
 };
+
 export default CharactersList;

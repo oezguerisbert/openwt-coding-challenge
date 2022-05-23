@@ -1,15 +1,31 @@
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
 interface ModalProps {
   item: any;
   isOpen: boolean;
   modalOpen: Function;
   modalClose: Function;
+  replace?: { [name: string]: ReactNode };
 }
 
-export const Modal = ({ item, isOpen, modalOpen, modalClose }: ModalProps) => {
+export const Modal = ({
+  item,
+  isOpen,
+  modalOpen,
+  modalClose,
+  replace,
+}: ModalProps) => {
   useEffect(() => {
     modalOpen();
+    const escHandler = (ev: globalThis.KeyboardEvent) => {
+      if (ev.key === "Escape") {
+        modalClose();
+      }
+    };
+    window.addEventListener("keyup", escHandler);
+    return () => {
+      window.removeEventListener("keyup", escHandler);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item]);
   return (
@@ -56,8 +72,13 @@ export const Modal = ({ item, isOpen, modalOpen, modalClose }: ModalProps) => {
                   className="grid grid-flow-row grid-cols-2 w-full"
                 >
                   <div className="flex flex-1 w-min capitalize">{key}</div>
-                  <div className="flex flex-1 text-ellipsis overflow-clip w-full">
-                    {(value as any).toString()}
+                  <div className="flex flex-1 text-ellipsis overflow-clip w-full text-left">
+                    {replace && Object.keys(replace).includes(key)
+                      ? replace[key]
+                      : (Array.isArray(value)
+                          ? value.join(", ")
+                          : (value as any)
+                        ).toString()}
                   </div>
                 </div>
               ))}

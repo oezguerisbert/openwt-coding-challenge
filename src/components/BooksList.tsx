@@ -3,6 +3,7 @@ import { useDisclosure } from "react-use-disclosure";
 import { API_URLs } from "../constants";
 import { Book } from "../types";
 import { filterBooks, nonDuplicate } from "../utils";
+import { CharacterList } from "./CharacterList";
 import { Modal } from "./Modal";
 
 interface Props {
@@ -51,6 +52,15 @@ const BooksList = ({ search }: Props) => {
           modalOpen={modalOpen}
           isOpen={isOpen}
           item={book}
+          replace={{
+            characters: book.characters.length,
+            povCharacters:
+              book.povCharacters.length <= 10 ? (
+                <CharacterList links={book.povCharacters} />
+              ) : (
+                book.povCharacters.length
+              ),
+          }}
         />
       )}
     </>
