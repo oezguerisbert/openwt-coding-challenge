@@ -75,7 +75,6 @@ const GameOfThrones = () => {
           className="flex w-1/3"
           onSubmit={(e) => {
             e.preventDefault();
-            setSearch(searchInputRef.current?.value ?? "");
           }}
         >
           <input
@@ -83,6 +82,7 @@ const GameOfThrones = () => {
             className="flex w-full"
             name="search"
             placeholder="Search..."
+            onChange={(e) => setSearch(searchInputRef.current?.value ?? "")}
           />
         </form>
         <button
